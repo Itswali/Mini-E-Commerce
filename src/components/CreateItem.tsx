@@ -1,17 +1,12 @@
 import { useState } from "react";
 import ViewItem from "./ViewItem";
+import { useCartStore } from "@/store/useCounterStore";
 
-interface Item {
-  name: string;
-  type: string;
-  image: string;
-  price: number;
-  details: string;
-}
 
 export default function CreateItem() {
-  const [itemList, setItemList] = useState<Item[]>([]);
-  const [item, setItem] = useState<Item>({
+  const addItem = useCartStore((state) => state.addItem);
+
+  const [item, setItem] = useState({
     name: "",
     type: "",
     image: "",
@@ -26,7 +21,14 @@ export default function CreateItem() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setItemList([...itemList, item]);
+    addItem(item);
+    setItem({
+    name: "",
+    type: "",
+    image: "",
+    price: 0,
+    details: "",
+  })
   };
 
   return (
