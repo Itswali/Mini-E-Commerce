@@ -104,7 +104,6 @@ export default function CreateItem() {
           Create Item
         </button>
       </form>
-      <ViewItem items={itemList} />
     </div>
   );
 }

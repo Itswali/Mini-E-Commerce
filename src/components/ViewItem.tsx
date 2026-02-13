@@ -1,6 +1,8 @@
+import { useCartStore } from "@/store/useCounterStore";
 
-export default function ViewItem({ items }: { items: any[] }) {
 
+export default function ViewItem() {
+  const items = useCartStore((state) => state.items)
   if (items.length === 0) {
     return <p className="text-slate-400 mt-4">No items created yet...</p>;
   }
