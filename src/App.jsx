@@ -1,9 +1,8 @@
-// src/App.tsx
+
 import { Button } from "@/components/ui/button"
 import { useCounterStore } from "@/store/useCounterStore"
 
 export default function App() {
-  // Grab what you need from the store
   const { count, increment, reset } = useCounterStore()
 
   return (

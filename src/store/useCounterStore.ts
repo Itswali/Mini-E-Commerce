@@ -1,14 +1,12 @@
-// src/store/useCounterStore.ts
+
 import { create } from 'zustand'
 
 interface CounterState {
-  count: number
-  increment: () => void
-  reset: () => void
+  addItem: () => void
+  display: () => void
 }
 
 export const useCounterStore = create<CounterState>((set) => ({
-  count: 0,
-  increment: () => set((state) => ({ count: state.count + 1 })),
-  reset: () => set({ count: 0 }),
+  // addItem:,
+  // reset: () => set({ count: 0 }),
 }))
