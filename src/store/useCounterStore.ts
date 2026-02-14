@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 
 
 interface Item {
-  id: string; // Added for unique identification
+  id: string;
   name: string;
   type: string;
   image: string;
@@ -14,6 +14,7 @@ interface Item {
 interface ItemStore {
   items: Item[];
   addItem: (newItem: Omit<Item, 'id'>) => void;
+  deleteItem: (itemId: 'id') => void;
 }
 export const useCartStore = create<ItemStore>()(
   persist(
@@ -24,6 +25,9 @@ export const useCartStore = create<ItemStore>()(
           ...state.items,
           {...newItem, id: crypto.randomUUID() },
         ],
+      })),
+      deleteItem: (itemId ) => set((state) => ({
+        items: state.items.filter((item) => item.id !== itemId)
       })),
     }),
     {

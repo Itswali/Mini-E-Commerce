@@ -3,6 +3,7 @@ import { useCartStore } from "@/store/useCounterStore";
 
 export default function ViewItem() {
   const items = useCartStore((state) => state.items)
+  const deleteItem = useCartStore((state) => state.deleteItem)
   if (items.length === 0) {
     return <p className="text-slate-400 mt-4">No items created yet...</p>;
   }
@@ -43,10 +44,7 @@ export default function ViewItem() {
           {item.details}
         </p>
 
-        {/* Optional Action Button */}
-        <button className="mt-4 w-full rounded-lg bg-slate-900 py-2 text-sm font-medium text-white hover:bg-slate-800 transition-colors">
-          View Details
-        </button>
+        <button onClick={() => deleteItem(item.id)} className="mt-4 w-1/6 rounded-lg bg-slate-900 py-2 text-sm font-medium text-white hover:bg-slate-800 transition-colors">X        </button>
       </div>
     </div>
   ))}
