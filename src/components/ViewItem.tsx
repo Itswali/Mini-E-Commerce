@@ -1,4 +1,5 @@
 import { useCartStore } from "@/store/useCounterStore";
+import { Icon } from "lucide-react";
 
 export default function ViewItem() {
   const items = useCartStore((state) => state.items);
@@ -9,7 +10,7 @@ export default function ViewItem() {
   }
 
   return (
-   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+   <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
   {items.map((item) => (
     <div
       key={item.id}
@@ -20,7 +21,6 @@ export default function ViewItem() {
           <img
             src={item.image}
             alt={item.name}
-            /* object-contain ensures the whole pic is visible, not zoomed */
             className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
