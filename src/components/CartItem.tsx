@@ -6,8 +6,9 @@ export default function CartItem() {
   const addCartItem = useCartStore((state) => state.addToCart);
   const deleteCart = useCartStore((state) => state.deleteCart);
 
-
-  const totalPrice = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+const tax = subtotal * 0.10;
+const totalPrice = subtotal + tax;
 
   if (cart.length === 0) {
     return (
@@ -64,7 +65,11 @@ export default function CartItem() {
         <div className="space-y-3 mb-6">
           <div className="flex justify-between text-slate-400 text-sm">
             <span>Subtotal ({cart.length} items)</span>
-            <span>${totalPrice.toFixed(2)}</span>
+            <span>${subtotal.toFixed(2)}</span>
+          </div>
+           <div className="flex justify-between text-slate-400 text-sm">
+            <span>Tax</span>
+            <span>${tax.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-slate-400 text-sm">
             <span>Shipping</span>

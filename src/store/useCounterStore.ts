@@ -18,10 +18,10 @@ interface ItemStore {
   items: Item[];
   cart: Citem[];
   addItem: (newItem: Omit<Item, 'id'>) => void;
-  deleteItem: (itemId: string) => void; // Changed from 'id' to string
+  deleteItem: (itemId: string) => void;
   addToCart: (item: Item) => void;
   removeFromCart: (itemId: string) => void;
-  deleteCart: (itemId: string) => void; // Changed from 'id' to string
+  deleteCart: (itemId: string) => void;
 }
 
 export const useCartStore = create<ItemStore>()(
