@@ -4,6 +4,7 @@ export default function CartItem() {
   const cart = useCartStore((state) => state.cart);
   const removeFromCart = useCartStore((state) => state.removeFromCart);
   const addCartItem = useCartStore((state) => state.addToCart);
+  const deleteCart = useCartStore((state) => state.deleteCart);
 
 
   const totalPrice = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
@@ -44,6 +45,13 @@ export default function CartItem() {
               title="Remove from cart"
             >
               <span className="text-lg">+</span>
+            </button>
+            <button
+              onClick={() => deleteCart(item.id)}
+              className="p-2 text-slate-400 hover:text-red-600 transition-colors"
+              title="Remove from cart"
+            >
+              <span className="text-lg">X</span>
             </button>
           </div>
         ))}
