@@ -3,9 +3,10 @@ import { useCartStore } from "@/store/useCounterStore";
 export default function CartItem() {
   const cart = useCartStore((state) => state.cart);
   const removeFromCart = useCartStore((state) => state.removeFromCart);
+  const addCartItem = useCartStore((state) => state.addToCart);
 
 
-  const totalPrice = cart.reduce((acc, item) => acc + item.price, 0);
+  const totalPrice = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
   if (cart.length === 0) {
     return (
@@ -28,13 +29,21 @@ export default function CartItem() {
               <h3 className="font-bold text-slate-800">{item.name}</h3>
               <p className="text-xs text-slate-400 uppercase tracking-wider">{item.type}</p>
               <p className="text-blue-600 font-bold mt-1">${item.price}</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider">quantity * {item.quantity}</p>
             </div>
             <button
               onClick={() => removeFromCart(item.id)}
               className="p-2 text-slate-400 hover:text-red-600 transition-colors"
               title="Remove from cart"
             >
-              <span className="text-lg">✕</span>
+              <span className="text-lg">-</span>
+            </button>
+            <button
+              onClick={() => addCartItem(item)}
+              className="p-2 text-slate-400 hover:text-red-600 transition-colors"
+              title="Remove from cart"
+            >
+              <span className="text-lg">+</span>
             </button>
           </div>
         ))}
