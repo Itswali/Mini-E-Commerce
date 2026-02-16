@@ -5,19 +5,21 @@ import './index.css'
 
 import CreateItem from './components/CreateItem'
 import ViewItem from './components/ViewItem'
-// import CartItem from './components/CartItem'
-// import Navbar from './components/Navbar'
+import Navbar from './components/Navbar'
+import Cartitem from './components/CartItem'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="/view" />} />
-
-        <Route path="/create" element={<CreateItem />} />
-        <Route path="/view" element={<ViewItem />} />
-        {/* <Route path="/cart" element={<CartItem />} /> */}
-      </Routes>
+      <Navbar />
+      <main className="pt-4">
+        <Routes>
+          <Route path="/" element={<Navigate to="/view" />} />
+          <Route path="/create" element={<CreateItem />} />
+          <Route path="/view" element={<ViewItem />} />
+          <Route path="/cart" element={<Cartitem />} />
+        </Routes>
+      </main>
     </BrowserRouter>
   </StrictMode>,
 )

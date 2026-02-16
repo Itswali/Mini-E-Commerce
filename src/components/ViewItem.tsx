@@ -4,6 +4,7 @@ import { Icon } from "lucide-react";
 export default function ViewItem() {
   const items = useCartStore((state) => state.items);
   const deleteItem = useCartStore((state) => state.deleteItem);
+  const addToCart = useCartStore((state) => state.addToCart);
 
   if (items.length === 0) {
     return <p className="text-slate-400 mt-4 text-center">No items created yet...</p>;
@@ -55,7 +56,7 @@ export default function ViewItem() {
           {item.details}
         </p>
 
-        <button className="mt-auto w-full rounded-lg bg-[#0f172a] py-2.5 text-sm font-semibold text-white transition-all hover:bg-slate-800 active:scale-[0.98]">
+        <button onClick={() => addToCart(item)} className="mt-auto w-full rounded-lg bg-[#0f172a] py-2.5 text-sm font-semibold text-white transition-all hover:bg-slate-800 active:scale-[0.98]">
           Add to Cart
         </button>
       </div>
