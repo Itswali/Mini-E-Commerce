@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware';
 
 interface Item {
+  _id?: string;
   id: string;
   name: string;
   type: string;
@@ -30,10 +31,10 @@ export const useCartStore = create<ItemStore>()(
       items: [],
       cart: [],
 
-      addItem: (newItem) => set((state) => ({
+      addItem: (savedItem) => set((state) => ({
         items: [
           ...state.items,
-          { ...newItem, id: crypto.randomUUID() },
+          { ...savedItem, id: savedItem._id },
         ],
       })),
 
