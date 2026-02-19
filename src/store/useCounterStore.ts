@@ -32,12 +32,24 @@ export const useCartStore = create<ItemStore>()(
       items: [],
       cart: [],
 
-      addItem: (savedItem) => set((state) => ({
-        items: [
-          ...state.items,
-          { ...savedItem, id: savedItem._id },
-        ],
-      })),
+      addItem: async (itemData) => {
+        try {
+          const res = await fetch("http://localhost:3000/api/items", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(itemData),
+          });
+          const savedItem = await res.json();
+          if (res.ok) {
+            set((state) => ({
+              items: [...state.items, { ...savedItem, id: savedItem._id }],
+            }));
+          }
+        } catch (err) {
+          console.error("Add item failed", err);
+        }
+      },
+
       setItems: (newItems) => set({ items: newItems }),
       deleteItem: async (itemId) => {
   try {
@@ -56,20 +68,31 @@ export const useCartStore = create<ItemStore>()(
   }
 },
 
-      addToCart: (item) => set((state) => {
-        const isItemInCart = state.cart.find((cartItem) => cartItem.id === item.id);
+      addToCart: async (item) => {
+  // 1. Logic to determine the new cart state locally
+  set((state) => {
+    const isItemInCart = state.cart.find((cartItem) => cartItem.id === item.id);
+    let newCart;
 
-        if (isItemInCart) {
-          return {
-            cart: state.cart.map((cartItem) =>
-              cartItem.id === item.id
-                ? { ...cartItem, quantity: cartItem.quantity + 1 }
-                : cartItem
-            ),
-          };
-        }
-        return { cart: [...state.cart, { ...item, quantity: 1 }] };
-      }),
+    if (isItemInCart) {
+      newCart = state.cart.map((cartItem) =>
+        cartItem.id === item.id
+          ? { ...cartItem, quantity: cartItem.quantity + 1 }
+          : cartItem
+      );
+    } else {
+      newCart = [...state.cart, { ...item, quantity: 1 }];
+    }
+
+    fetch("http://localhost:3000/api/cart", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cart: newCart }),
+    }).catch(err => console.error("Syncing cart failed:", err));
+
+    return { cart: newCart };
+  });
+},
 
       removeFromCart: (itemId) => set((state) => {
         const existingItem = state.cart.find(i => i.id === itemId);

@@ -19,35 +19,17 @@ export default function CreateItem() {
   const labelStyles =
     "flex flex-col gap-1 text-sm font-semibold text-slate-700 mb-4";
 
- const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Button Clicked!");
-
-    try {
-      const response = await fetch("http://localhost:3000/api/items", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(item),
-      });
-
-      if (response.ok) {
-        const savedItem = await response.json();
-
-        // Now update your local Zustand store with the actual DB object
-        addItem(savedItem);
-
-        // Clear the form
-        setItem({ name: "", type: "", image: "", price: 0, details: "" });
-        alert("Item saved to database!");
-      } else {
-        alert("Failed to save item.");
-      }
-    } catch (error) {
-      console.error("Connection error:", error);
-    }
-  };
+    addItem(item);
+    setItem({
+    name: "",
+    type: "",
+    image: "",
+    price: 0,
+    details: "",
+  })
+}
 
   return (
     <div className="p-6 max-w-md mx-auto">
