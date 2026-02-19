@@ -19,17 +19,21 @@ export default function CreateItem() {
   const labelStyles =
     "flex flex-col gap-1 text-sm font-semibold text-slate-700 mb-4";
 
-  const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
-    addItem(item);
+
+    await addItem(item);
+
     setItem({
-    name: "",
-    type: "",
-    image: "",
-    price: 0,
-    details: "",
-  })
-}
+      name: "",
+      type: "",
+      image: "",
+      price: 0,
+      details: "",
+    });
+
+    console.log("Item synced with database successfully!");
+  }
 
   return (
     <div className="p-6 max-w-md mx-auto">

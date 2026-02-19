@@ -53,12 +53,10 @@ export const useCartStore = create<ItemStore>()(
       setItems: (newItems) => set({ items: newItems }),
       deleteItem: async (itemId) => {
   try {
-    // 1. Tell the API to delete it from MongoDB
     await fetch(`http://localhost:3000/api/items/${itemId}`, {
       method: 'DELETE'
     });
 
-    // 2. Update the UI (Zustand) only after successful DB deletion
     set((state) => ({
       items: state.items.filter((item) => item.id !== itemId),
       cart: state.cart.filter((item) => item.id !== itemId)
@@ -69,7 +67,6 @@ export const useCartStore = create<ItemStore>()(
 },
 
       addToCart: async (item) => {
-  // 1. Logic to determine the new cart state locally
   set((state) => {
     const isItemInCart = state.cart.find((cartItem) => cartItem.id === item.id);
     let newCart;
