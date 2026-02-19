@@ -24,6 +24,7 @@ interface ItemStore {
   removeFromCart: (itemId: string) => void;
   deleteCart: (itemId: string) => void;
   setItems: (items: Item[]) => void;
+  // editItem: (item: Item) => void;
 }
 
 export const useCartStore = create<ItemStore>()(

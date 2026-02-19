@@ -47,6 +47,7 @@ const totalPrice = subtotal + tax;
             >
               <span className="text-lg">+</span>
             </button>
+
             <button
               onClick={() => deleteCart(item.id)}
               className="p-2 text-slate-400 hover:text-red-600 transition-colors"
