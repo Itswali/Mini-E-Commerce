@@ -23,6 +23,7 @@ interface ItemStore {
   addToCart: (item: Item) => void;
   removeFromCart: (itemId: string) => void;
   deleteCart: (itemId: string) => void;
+  setItems: (items: Item[]) => void;
 }
 
 export const useCartStore = create<ItemStore>()(
@@ -37,11 +38,23 @@ export const useCartStore = create<ItemStore>()(
           { ...savedItem, id: savedItem._id },
         ],
       })),
+      setItems: (newItems) => set({ items: newItems }),
+      deleteItem: async (itemId) => {
+  try {
+    // 1. Tell the API to delete it from MongoDB
+    await fetch(`http://localhost:3000/api/items/${itemId}`, {
+      method: 'DELETE'
+    });
 
-      deleteItem: (itemId) => set((state) => ({
-        items: state.items.filter((item) => item.id !== itemId),
-        cart: state.cart.filter((item) => item.id !== itemId)
-      })),
+    // 2. Update the UI (Zustand) only after successful DB deletion
+    set((state) => ({
+      items: state.items.filter((item) => item.id !== itemId),
+      cart: state.cart.filter((item) => item.id !== itemId)
+    }));
+  } catch (err) {
+    console.error("Delete failed", err);
+  }
+},
 
       addToCart: (item) => set((state) => {
         const isItemInCart = state.cart.find((cartItem) => cartItem.id === item.id);

@@ -1,7 +1,24 @@
 import { useCartStore } from '@/store/useCounterStore';
+import { useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
 const Navbar = () => {
+  const setItems = useCartStore((state) => state.setItems);
+
+useEffect(() => {
+  const loadData = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/api/items");
+      const data = await response.json();
+      // Map _id to id so your deleteItem function still works!
+      const formattedData = data.map((item) => ({ ...item, id: item._id }));
+      setItems(formattedData);
+    } catch (err) {
+      console.error("Failed to fetch items", err);
+    }
+  };
+  loadData();
+}, [setItems]);
   const cart = useCartStore((state) => state.cart);
   const navItems = [
     { name: 'View Items', path: '/view' },

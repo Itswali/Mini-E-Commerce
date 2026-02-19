@@ -8,6 +8,7 @@ import ViewItem from './components/ViewItem'
 import Navbar from './components/Navbar'
 import Cartitem from './components/CartItem'
 
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
