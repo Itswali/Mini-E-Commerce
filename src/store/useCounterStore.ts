@@ -1,5 +1,5 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface Item {
   _id?: string;
@@ -18,13 +18,13 @@ interface Citem extends Item {
 interface ItemStore {
   items: Item[];
   cart: Citem[];
-  addItem: (newItem: Omit<Item, 'id'>) => void;
+  addItem: (newItem: Omit<Item, "id">) => void;
   deleteItem: (itemId: string) => void;
   addToCart: (item: Item) => void;
   removeFromCart: (itemId: string) => void;
   deleteCart: (itemId: string) => void;
   setItems: (items: Item[]) => void;
-  // editItem: (item: Item) => void;
+  editItem: (itemId: string, updatedData: Partial<Item>) => Promise<void>;
 }
 
 export const useCartStore = create<ItemStore>()(
@@ -50,67 +50,99 @@ export const useCartStore = create<ItemStore>()(
           console.error("Add item failed", err);
         }
       },
+      editItem: async (itemId, updatedData) => {
+        try {
+          const res = await fetch(`http://localhost:3000/api/items/${itemId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedData),
+          });
+
+          if (!res.ok) throw new Error("Failed to update item");
+
+          const updatedItem = await res.json();
+
+          set((state) => ({
+            // Update the item in the main catalog
+            items: state.items.map((item) =>
+              item.id === itemId ? { ...item, ...updatedItem } : item,
+            ),
+            // Update the item if it exists in the cart (preserving quantity)
+            cart: state.cart.map((cartItem) =>
+              cartItem.id === itemId
+                ? { ...cartItem, ...updatedItem }
+                : cartItem,
+            ),
+          }));
+        } catch (err) {
+          console.error("Edit item failed:", err);
+        }
+      },
 
       setItems: (newItems) => set({ items: newItems }),
       deleteItem: async (itemId) => {
-  try {
-    await fetch(`http://localhost:3000/api/items/${itemId}`, {
-      method: 'DELETE'
-    });
+        try {
+          await fetch(`http://localhost:3000/api/items/${itemId}`, {
+            method: "DELETE",
+          });
 
-    set((state) => ({
-      items: state.items.filter((item) => item.id !== itemId),
-      cart: state.cart.filter((item) => item.id !== itemId)
-    }));
-  } catch (err) {
-    console.error("Delete failed", err);
-  }
-},
+          set((state) => ({
+            items: state.items.filter((item) => item.id !== itemId),
+            cart: state.cart.filter((item) => item.id !== itemId),
+          }));
+        } catch (err) {
+          console.error("Delete failed", err);
+        }
+      },
 
       addToCart: async (item) => {
-  set((state) => {
-    const isItemInCart = state.cart.find((cartItem) => cartItem.id === item.id);
-    let newCart;
+        set((state) => {
+          const isItemInCart = state.cart.find(
+            (cartItem) => cartItem.id === item.id,
+          );
+          let newCart;
 
-    if (isItemInCart) {
-      newCart = state.cart.map((cartItem) =>
-        cartItem.id === item.id
-          ? { ...cartItem, quantity: cartItem.quantity + 1 }
-          : cartItem
-      );
-    } else {
-      newCart = [...state.cart, { ...item, quantity: 1 }];
-    }
+          if (isItemInCart) {
+            newCart = state.cart.map((cartItem) =>
+              cartItem.id === item.id
+                ? { ...cartItem, quantity: cartItem.quantity + 1 }
+                : cartItem,
+            );
+          } else {
+            newCart = [...state.cart, { ...item, quantity: 1 }];
+          }
 
-    fetch("http://localhost:3000/api/cart", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ cart: newCart }),
-    }).catch(err => console.error("Syncing cart failed:", err));
+          fetch("http://localhost:3000/api/cart", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ cart: newCart }),
+          }).catch((err) => console.error("Syncing cart failed:", err));
 
-    return { cart: newCart };
-  });
-},
+          return { cart: newCart };
+        });
+      },
 
-      removeFromCart: (itemId) => set((state) => {
-        const existingItem = state.cart.find(i => i.id === itemId);
+      removeFromCart: (itemId) =>
+        set((state) => {
+          const existingItem = state.cart.find((i) => i.id === itemId);
 
-        if (existingItem && existingItem.quantity > 1) {
-          return {
-            cart: state.cart.map((i) =>
-              i.id === itemId ? { ...i, quantity: i.quantity - 1 } : i
-            ),
-          };
-        }
-        return { cart: state.cart.filter((i) => i.id !== itemId) };
-      }),
+          if (existingItem && existingItem.quantity > 1) {
+            return {
+              cart: state.cart.map((i) =>
+                i.id === itemId ? { ...i, quantity: i.quantity - 1 } : i,
+              ),
+            };
+          }
+          return { cart: state.cart.filter((i) => i.id !== itemId) };
+        }),
 
-      deleteCart: (itemId) => set((state) => ({
-        cart: state.cart.filter((item) => item.id !== itemId)
-      })),
+      deleteCart: (itemId) =>
+        set((state) => ({
+          cart: state.cart.filter((item) => item.id !== itemId),
+        })),
     }),
     {
-      name: 'cart-storage',
-    }
-  )
+      name: "cart-storage",
+    },
+  ),
 );
