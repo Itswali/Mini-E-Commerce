@@ -63,11 +63,9 @@ export const useCartStore = create<ItemStore>()(
           const updatedItem = await res.json();
 
           set((state) => ({
-            // Update the item in the main catalog
             items: state.items.map((item) =>
               item.id === itemId ? { ...item, ...updatedItem } : item,
             ),
-            // Update the item if it exists in the cart (preserving quantity)
             cart: state.cart.map((cartItem) =>
               cartItem.id === itemId
                 ? { ...cartItem, ...updatedItem }
