@@ -15,9 +15,19 @@ interface Citem extends Item {
   quantity: number;
 }
 
+interface User {
+  id: string;
+  username: string;
+  email: string;
+}
+
 interface ItemStore {
   items: Item[];
   cart: Citem[];
+  user: User | null;
+  token: string | null;
+  setAuth: (user: User, token: string) => void;
+  logout: () => void;
   addItem: (newItem: Omit<Item, "id">) => void;
   deleteItem: (itemId: string) => void;
   addToCart: (item: Item) => void;
@@ -29,15 +39,24 @@ interface ItemStore {
 
 export const useCartStore = create<ItemStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       items: [],
       cart: [],
+      user: null,
+      token: null,
+
+      setAuth: (user, token) => set({ user, token }),
+      logout: () => set({ user: null, token: null, cart: [] }),
 
       addItem: async (itemData) => {
+        const { token } = get(); // Grab token from state
         try {
           const res = await fetch("http://localhost:3000/api/items", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}` // ADDED THIS
+            },
             body: JSON.stringify(itemData),
           });
           const savedItem = await res.json();
