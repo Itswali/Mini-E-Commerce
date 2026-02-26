@@ -49,13 +49,13 @@ export const useCartStore = create<ItemStore>()(
       logout: () => set({ user: null, token: null, cart: [] }),
 
       addItem: async (itemData) => {
-        const { token } = get(); // Grab token from state
+        const { token } = get();
         try {
           const res = await fetch("http://localhost:3000/api/items", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}` // ADDED THIS
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(itemData),
           });
@@ -70,30 +70,28 @@ export const useCartStore = create<ItemStore>()(
         }
       },
       editItem: async (itemId, updatedData) => {
-        try {
-          const res = await fetch(`http://localhost:3000/api/items/${itemId}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(updatedData),
-          });
+        const { token } = get();
+        const res = await fetch(`http://localhost:3000/api/items/${itemId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updatedData),
+        });
 
-          if (!res.ok) throw new Error("Failed to update item");
+        if (!res.ok) throw new Error("Failed to update item");
 
-          const updatedItem = await res.json();
+        const updatedItem = await res.json();
 
-          set((state) => ({
-            items: state.items.map((item) =>
-              item.id === itemId ? { ...item, ...updatedItem } : item,
-            ),
-            cart: state.cart.map((cartItem) =>
-              cartItem.id === itemId
-                ? { ...cartItem, ...updatedItem }
-                : cartItem,
-            ),
-          }));
-        } catch (err) {
-          console.error("Edit item failed:", err);
-        }
+        set((state) => ({
+          items: state.items.map((item) =>
+            item.id === itemId ? { ...item, ...updatedItem } : item,
+          ),
+          cart: state.cart.map((cartItem) =>
+            cartItem.id === itemId ? { ...cartItem, ...updatedItem } : cartItem,
+          ),
+        }));
       },
 
       setItems: (newItems) => set({ items: newItems }),
